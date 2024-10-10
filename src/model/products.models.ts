@@ -7,7 +7,7 @@ export interface IProduct extends Document {
     description?: string;
     category_id: string;
     price: number | string;
-    created_at: string
+    created_at?: string
   }
   
 
@@ -16,7 +16,7 @@ const ProductSchema = new Schema<IProduct>({
     description : {type: String, required: false},
     category_id: {type: String, required: true},
     price: {type: String, required: true},
-    created_at: {type: String, required: true}
+    created_at: {type: String, required: false}
 });
 
 

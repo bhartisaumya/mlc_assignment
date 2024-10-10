@@ -1,4 +1,4 @@
-import jwt, { JwtPayload } from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import createError from 'http-errors'
 import { NextFunction } from 'express'
 

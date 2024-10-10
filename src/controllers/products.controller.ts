@@ -5,7 +5,7 @@ import productModel from "../model/products.models"
 
  const handelPostProduct = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const productData = req.body;
+        let productData = req.body;
         productData.created_at = Date()
 
         const savedProduct = new productModel(productData)
@@ -61,9 +61,29 @@ const handelDeleteProduct = async (req: Request, res: Response, next: NextFuncti
             throw createError.NotFound("Invalid ProductId...")
         
     } catch (error) {
-        
+        next(error)
     }
 }
+
+const handelGetProductByCategories = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const productId = req.params.id
+        const deletedProduct = await productModel.findByIdAndDelete(productId)
+
+        if(deletedProduct?.id == productId)
+            res.status(201).send({
+                message: "Product Deleted successfully..."
+            })
+        else
+            throw createError.NotFound("Invalid ProductId...")
+        
+    } catch (error) {
+        next(error)
+    }
+}
+
+
+
 
 export default {
     handelGetProductByParams,

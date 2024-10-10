@@ -6,6 +6,7 @@ import categoryModel from "../model/categories.models"
  const handelPostCategory = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const categoryData = req.body;
+        categoryData.created_at = Date()
 
         const savedCategory = new categoryModel(categoryData)
         await savedCategory.save()     
@@ -36,9 +37,17 @@ const handelGetCategoryByParams = async (req: Request, res: Response, next: Next
 
  const handelUpdateCategory = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const categoryId = req.params.id
+        const id = req.params.id
+
+        console.log(id)
         const newCategoryData = req.body
-        await categoryModel.findByIdAndUpdate(categoryId, {$set: newCategoryData})
+        const result = await categoryModel.findByIdAndUpdate(id, {$set: newCategoryData})
+
+
+
+        if(!result)
+            throw createError.NotFound("Could not find the category...")
+        console.log(result)
 
         res.status(201).send({
             message: "Category updated successfully..."
