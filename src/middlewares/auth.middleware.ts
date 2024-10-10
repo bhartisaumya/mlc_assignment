@@ -1,30 +1,36 @@
 import jwt from 'jsonwebtoken'
 import createError from 'http-errors'
-import { NextFunction } from 'express'
+import {Response, Request, NextFunction } from 'express'
 
-const signAccessToken = (userId: string) => {
-    return new Promise((resolve, reject) => {
-        const payload = {
-            userId
-        };
-        const secret = process.env.ACCESS_TOKEN_SECRET as string;
-        const options = {
-            audience: userId,
-            expiresIn: '6h',
-        };
-        jwt.sign(payload, secret, options, (err, token) => {
-            if(err)
-                return reject(err)
-            resolve(token)
-        })
+const signAccessToken = (req: Request, res: Response, next: NextFunction) => {
+    const userId: string = req.body?.userId
+
+    const payload = {
+        userId
+    };
+
+    const secret = process.env.ACCESS_TOKEN_SECRET as string;
+
+    const options = {
+        audience: userId,
+        expiresIn: '6h',
+    };
+
+    jwt.sign(payload, secret, options, (err, token) => {
+        if(err)
+            throw err
+
+        res.status(200).json({token})
     })
 }
 
 const verifyAccessToken = (req: any, res: any, next: NextFunction) => {
-    const token = req.headers?.authorization;
+    const bearerToken: string = req.headers?.authorization;
 
-    if(!token)
+    if(!bearerToken)
         return next(createError.Unauthorized());
+
+    const token = bearerToken.split(' ')[1]
 
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET as string, (err: any, payload: any) => {
         if(err){

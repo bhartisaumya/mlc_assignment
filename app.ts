@@ -1,6 +1,6 @@
 import express, {Request, Response, NextFunction} from 'express'
 import * as dotenv from 'dotenv';
-// import cors from 'cors';
+import cors from 'cors';
 
 dotenv.config();
 
@@ -18,20 +18,23 @@ import authMiddlewares from './src/middlewares/auth.middleware';
 
 const app: express.Application = express();
 
+app.use(cors({
+    origin:'*'
+}))
+
 app.use(express.json())
 app.use(express.urlencoded({extended : true}));
 
-// app.use(authMiddlewares.verifyAccessToken)
+app.post('/auth', authMiddlewares.signAccessToken)
 
-// app.use('/', (req, res) => {
-//     console.log(req.body)
-//     res.send({val: req.body})
-// })
+app.use(authMiddlewares.verifyAccessToken)
+
 
 app.use('/products', productRoute)
 app.use('/categories', categoryRoute)
 
 app.use('/filter', filterRoute)
+
 
 
 // error handling
